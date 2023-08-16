@@ -1,0 +1,14 @@
+Tokens
+
+IDENTIFIER:
+	(a..z)(a..z | 0..9)*
+NUMBER:
+	(0..9)+
+MATH_OP:
+	+ | - | * | /
+REL_OP:
+	> | >= | < | <= | == | !=
+ASSIGNMENT:
+	=
+DELIM:
+	;
