@@ -71,8 +71,11 @@ public class Scanner {
           }  else if (isParenthesesRight(currentChar)) {
             content.append(currentChar);
             this.state = 11;
-          } else {
-            LexicalException.unrecognizedSymbol(this.currentChar, this.current_line, this.current_column);
+          } else if (isDeclaration(currentChar)){
+            content.append(currentChar);
+            this.state = 12;
+          }  else {
+              LexicalException.unrecognizedSymbol(this.currentChar, this.current_line, this.current_column);
           }
         }
         case 1 -> {
@@ -219,6 +222,11 @@ public class Scanner {
           back();
           return new Token(TokenType.PAR_RIGHT, content.toString());
         } 
+
+        case 12 -> {
+          back();
+          return new Token(TokenType.DECLARATION, content.toString());
+        }
         default -> {
         }
       }
@@ -288,6 +296,9 @@ public class Scanner {
     return (currentChar == '=');
   }
 
+  private boolean isDeclaration(char currentChar) {
+    return (currentChar == ':');
+  }
   // Método responsavel por verificar se o caractere digitado é um parêntese
   private boolean isParenthesesLeft(char currentChar) {
     return (currentChar == '(');

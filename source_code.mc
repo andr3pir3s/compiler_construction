@@ -1,5 +1,2 @@
-(2)
-(3)
-((5))
-))
-((
+: DECLARACOES
+numero1 : int
