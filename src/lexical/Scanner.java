@@ -16,13 +16,25 @@ public class Scanner {
   int state;
   int pos;
 
-  int current_line = 1; // Variavel responsável por contar as linhas
+  public int current_line = 1; // Variavel responsável por contar as linhas
   // a linha só é incrementada quando um '\n' é lido, por isso começa com 1
 
-  int current_column = 0; // Variavel responsável por contar as colunas
+  public int current_column = 0; // Variavel responsável por contar as colunas
 
   // ArrayList responsavel por armazenar as palavras reservadas
-  ArrayList<String> reserved_table = new ArrayList<>(Arrays.asList("int", "float", "print", "if", "else"));
+  ArrayList<String> reserved_table = new ArrayList<>(Arrays.asList(
+    "int", "float", "PRINTF", "SI", "SINON","DEBUT", "FIN", "PENDENT",
+    "DECLARATION","ALGORITHME","SCANF", "ALORS"
+
+  ));
+
+  public int getCurrent_line() {
+    return current_line;
+  }
+
+  public int getCurrent_column() {
+    return current_column;
+  }
 
   public Scanner(String filename) {
     try {
@@ -71,7 +83,7 @@ public class Scanner {
           }  else if (isParenthesesRight(currentChar)) {
             content.append(currentChar);
             this.state = 11;
-          } else if (isDeclaration(currentChar)){
+          } else if (isColon(currentChar)){
             content.append(currentChar);
             this.state = 12;
           }  else {
@@ -91,12 +103,13 @@ public class Scanner {
            */
           if (isLetterOrUnderscore(currentChar) || isDigit(currentChar)) {
             content.append(currentChar);
-          } else if (isSpace(currentChar) || isRelational(currentChar) || isNot(currentChar)
-              || isParenthesesLeft(currentChar)
-              || isComment(currentChar) || isParenthesesRight(currentChar)) {
+          } else if (isSpace(currentChar) || isRelational(currentChar) || isNot(currentChar)|| isColon(currentChar)
+            || isParenthesesLeft(currentChar) || isComment(currentChar) || isParenthesesRight(currentChar)) {
             if (research(content, reserved_table)) {
               back();
               return new Token(TokenType.RESERVED, content.toString());
+            } else if (content.toString().equals("ET") ||content.toString().equals("OU") ){
+              return new Token(TokenType.BOOLEAN, content.toString());
             } else {
               back();
               return new Token(TokenType.IDENTIFIER, content.toString());
@@ -122,7 +135,7 @@ public class Scanner {
           } else if (isSpace(currentChar) || isOperator(currentChar) || isNot(currentChar) || isRelational(currentChar)
               || isParenthesesLeft(currentChar) || isComment(currentChar) || isParenthesesRight(currentChar)) {
             back();
-            return new Token(TokenType.NUMBER, content.toString());
+            return new Token(TokenType.INTEGER, content.toString());
           } else {
             LexicalException.badValue(this.currentChar, this.current_line, this.current_column);
           }
@@ -151,10 +164,12 @@ public class Scanner {
            */
           if (isDigit(currentChar)) {
             content.append(currentChar);
-          } else if (isSpace(currentChar) || isOperator(currentChar) || isNot(currentChar) || isRelational(currentChar)
-              || isAttribution(currentChar) || isParenthesesLeft(currentChar) || isComment(currentChar) || isParenthesesRight(currentChar)) {
+          } else if (
+            isSpace(currentChar) || isOperator(currentChar) || isNot(currentChar) || isRelational(currentChar) ||
+            isAttribution(currentChar) || isParenthesesLeft(currentChar) || isComment(currentChar) ||
+            isParenthesesRight(currentChar)) {
             back();
-            return new Token(TokenType.NUMBER, content.toString());
+            return new Token(TokenType.FLOAT, content.toString());
           } else {
             LexicalException.badValue(this.currentChar, this.current_line, this.current_column);
           }
@@ -225,7 +240,7 @@ public class Scanner {
 
         case 12 -> {
           back();
-          return new Token(TokenType.DECLARATION, content.toString());
+          return new Token(TokenType.COLON, content.toString());
         }
         default -> {
         }
@@ -296,7 +311,7 @@ public class Scanner {
     return (currentChar == '=');
   }
 
-  private boolean isDeclaration(char currentChar) {
+  private boolean isColon(char currentChar) {
     return (currentChar == ':');
   }
   // Método responsavel por verificar se o caractere digitado é um parêntese

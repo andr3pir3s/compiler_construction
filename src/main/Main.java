@@ -3,15 +3,14 @@ package main;
 import exception.ParserException;
 import exception.ScannerException;
 import lexical.Scanner;
-import lexical.Token;
-import syntax.Parse;
+import syntax.Parser;
 
 public class Main {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner("source_code.mc");
-		Parse parser = new Parse(sc);
+		Parser parser = new Parser(sc);
 		try {
-			parser.programa();
+			parser.program();
 			System.out.println("Compilation Successful!");
 		} catch (ScannerException e) {
 			System.out.println("Lexical Error: " + e.getMessage());
